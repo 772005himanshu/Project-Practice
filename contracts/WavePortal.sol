@@ -18,10 +18,6 @@ contract WavePortal {
 
     Wave[] waves;
 
-    /*
-     * 这是一个地址型到实数型的映射，我可以把一个地址和一个数字联系起来
-     * 在这里，我将把地址和用户向我们wave的时间储存在一起
-     */
     mapping(address => uint256) public lastWavedAt;
 
     constructor() payable {
@@ -33,16 +29,12 @@ contract WavePortal {
     }
 
     function wave(string memory _message) public {
-        /*
-         *我们需要确保当前时间戳至少比我们存储的上一个时间戳大 15 分钟
-         */
+
         require(
             require(lastWavedAt[msg.sender] + 30 seconds < block.timestamp, "Must wait 30 seconds before waving again.");
         );
 
-        /*
-         * 收集用户当前的时间戳
-         */
+
         lastWavedAt[msg.sender] = block.timestamp;
 
         totalWaves += 1;
@@ -50,9 +42,7 @@ contract WavePortal {
 
         waves.push(Wave(msg.sender, _message, block.timestamp));
 
-        /*
-         * 生成一个新的seed为后面的用户发送wave准备。
-         */
+
         seed = (block.difficulty + block.timestamp + seed) % 100;
 
         if (seed <= 50) {
